@@ -5,7 +5,7 @@ import "./App.css";
 const App: FC<PropsWithChildren> = () => {
   return (
     <div className="App">
-      <Timer time={3600} />
+      <Timer seconds={60} />
     </div>
   );
 };

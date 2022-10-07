@@ -1,44 +1,40 @@
-import { FC, useEffect, useState, type PropsWithChildren } from "react";
+import { FC, useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 
-interface State {
-  time: number;
-  minutes: number;
+interface Props {
   seconds: number;
 }
 
-interface Props {
-  time: number;
-}
+const Timer: FC<PropsWithChildren<Props>> = ({ seconds }) => {
+  const [timeLeft, setTimeLeft] = useState<number>(seconds);
+  const intervalRef = useRef<number | undefined>();
+  const start = Date.now();
 
-const Timer: FC<PropsWithChildren<Props>> = ({ time }) => {
-  const [state, setState] = useState<State>({
-    time: (time += 1),
-    minutes: Math.floor((time - 1) / 60),
-    seconds: time - Math.floor((time - 1) / 60) * 60 - 1,
-  });
+  const countdown = useCallback(() => {
+    intervalRef.current = window.setInterval(() => {
+      const tick = Math.floor((Date.now() - start) / 1000);
+
+      return setTimeLeft(seconds - tick);
+    }, 1000);
+  }, [seconds, start]);
+
+  const convertSecondsToMinutes = () => {
+    const minutes = Math.floor(timeLeft / 60);
+    const secondsRemaining = timeLeft % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(secondsRemaining).padStart(2, "0")}`;
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setState((prevState) => ({
-        time: prevState.time - 1,
-        minutes: Math.floor((prevState.time - 1) / 60),
-        seconds:
-          prevState.time - Math.floor((prevState.time - 1) / 60) * 60 - 1,
-      }));
-    }, 1000);
-
-    if (state.time === 0) {
-      return clearTimeout(timer);
+    if (timeLeft <= 0) {
+      clearInterval(intervalRef.current);
     }
-  }, [state.time]);
 
-  return (
-    <h1>
-      {`${state.minutes}:${
-        state.seconds < 10 ? `0${state.seconds}` : state.seconds
-      }`}
-    </h1>
-  );
+    if (!intervalRef.current) {
+      countdown();
+    }
+  }, [countdown, timeLeft]);
+
+  return <h1>{convertSecondsToMinutes()}</h1>;
 };
 
 export { Timer };
