@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, type PropsWithChildren } from "react";
 
 interface State {
   time: number;
@@ -10,8 +10,7 @@ interface Props {
   time: number;
 }
 
-const Timer: FC<Props> = ({ time }): JSX.Element => {
-  //   time += 1;
+const Timer: FC<PropsWithChildren<Props>> = ({ time }) => {
   const [state, setState] = useState<State>({
     time: (time += 1),
     minutes: Math.floor((time - 1) / 60),
@@ -27,8 +26,6 @@ const Timer: FC<Props> = ({ time }): JSX.Element => {
           prevState.time - Math.floor((prevState.time - 1) / 60) * 60 - 1,
       }));
     }, 1000);
-
-    console.log(state.time);
 
     if (state.time === 0) {
       return clearTimeout(timer);

@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, type PropsWithChildren } from "react";
 import Timer from "./components/Timer";
 import "./App.css";
 
-const App: FC = (): JSX.Element => {
+const App: FC<PropsWithChildren> = () => {
   return (
     <div className="App">
       <Timer time={3600} />
